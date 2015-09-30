@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category    Vuleticd
+ * @package     Vuleticd_Assist
+ * @copyright   Copyright (c) 2015 Vuletic Dragan (http://www.vuleticd.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+ -->
+ <config>
+    <modules>
+        <Vuleticd_Assist>
+            <version>0.1.0.0</version>
+        </Vuleticd_Assist>
+    </modules>
+    <global>
+        <models>
+            <assist>
+                <class>Vuleticd_Assist_Model</class>
+            </assist>
+        </models>
+        <blocks>
+            <assist>
+                <class>Vuleticd_Assist_Block</class>
+            </assist>
+        </blocks>
+        <helpers>
+            <assist>
+                <class>Vuleticd_Assist_Helper</class>
+            </assist>
+        </helpers>
+    </global>
+    <frontend>
+        <routers>
+            <assist>
+                <use>standard</use>
+                <args>
+                    <module>Vuleticd_Assist</module>
+                    <frontName>assist</frontName>
+                </args>
+            </assist>
+        </routers>
+        <layout>
+            <updates>
+                <assist>
+                    <file>assist/update.xml</file>
+                </assist>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Vuleticd_Assist>
+                    <files>
+                        <default>Vuleticd_Assist.csv</default>
+                    </files>
+                </Vuleticd_Assist>
+            </modules>
+        </translate>
+    </frontend>
+    <default>
+        <payment>
+            <assist>
+                <active>0</active>
+                <model>assist/payment</model>
+                <title>Pay by Debit / Credit Card (ASSIST)</title>
+                <payment_action>authorize</payment_action>
+                <payment_system>Controlled</payment_system>
+                <mobile>0</mobile>
+                <secure_order>0</secure_order>
+                <secure_response>0</secure_response>
+                <secure_services>0</secure_services>
+                <sort_order>1000</sort_order>
+                <mode>1</mode>
+                <debug>0</debug>
+            </assist>
+        </payment>
+    </default>
+</config>
