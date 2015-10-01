@@ -42,9 +42,11 @@ class Vuleticd_Assist_StandardController extends Mage_Core_Controller_Front_Acti
             if (!$this->_getOrder()->getId()) {
                 Mage::throwException(Mage::helper('assist')->__('No order for processing found'));
             }
-
+            $this->_getCheckoutSession()->setAssistQuoteId($this->_getCheckoutSession()->getQuoteId());
             $this->loadLayout();
             $this->renderLayout();
+            $this->_getCheckoutSession()->unsQuoteId();
+            $this->_getCheckoutSession()->unsRedirectUrl();
             return;
         } catch (Mage_Core_Exception $e) {
             $this->_getCheckoutSession()->addError($e->getMessage());
@@ -252,6 +254,8 @@ class Vuleticd_Assist_StandardController extends Mage_Core_Controller_Front_Acti
     public function cancelAction()
     {
         $params = $this->getRequest()->getParams();
+        $session = $this->_getCheckoutSession();
+        $session->setQuoteId($session->getAssistQuoteId(true));
         $orderId = $params['ordernumber'];
         $order = $this->_getOrder($orderId);
         $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
@@ -266,13 +270,14 @@ class Vuleticd_Assist_StandardController extends Mage_Core_Controller_Front_Acti
                     Mage::helper('assist')->__('Customer payment on ASSIST failed.')
                 )->save();
 
-            $quote->setIsActive(true)->save();
-            $this->_getCheckoutSession()->setQuoteId($quote->getId());
-            $this->_getCheckoutSession()->addError(Mage::helper('assist')->__('Sorry, your transaction is failed and cannot be'
+            $quote->setIsActive(true)->setReservedOrderId(null)->save();
+            //$session->setQuoteId($quote->getId());
+            $session->addError(Mage::helper('assist')->__('Sorry, your transaction is failed and cannot be'
                                                             . ' processed, please choose another payment method'
                                                             . ' or contact Customer Care to complete'
                                                             . ' your order.'));
-            $this->_redirect('checkout/payment', array('_secure' => true));
+            $session->replaceQuote($quote)->unsLastRealOrderId();
+            $this->_redirect('checkout/cart', array('_secure' => true));
         }
     }
 
@@ -297,8 +302,8 @@ class Vuleticd_Assist_StandardController extends Mage_Core_Controller_Front_Acti
             
             $state = $paymentInst->orderstate($order);
 
+            $session->setQuoteId($session->getAssistQuoteId(true));
             $session->getQuote()->setIsActive(false)->save();
-            $session->clear();
             // success payments URL
             $this->_redirect('checkout/onepage/success', array('_secure' => true));
             return;
